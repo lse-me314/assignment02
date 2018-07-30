@@ -8,7 +8,26 @@ You may find it useful to learn more how to use dataframe in R, read the [how-to
 
 If you get stuck somewhere, feel free to contact us! As this is a formative assignment, we are happy to give you a few lines of codes to help you to start.
 
-## 1. Load the HPI data
+## 1.  **Reshaping a simple example.**
+
+a.  From the `cmpdata` object, replicate the reshaped object `cmpdataLong` from the lecture notes, using the **reshape2** package.  (Just use the same syntax as in the lecture notes.)
+
+```{r}
+library("reshape2")
+
+## your code here
+```
+
+b.  Try using **dplyr** on `cmpdataLong` to "spread" this back into the wide format.
+
+```{r}
+library("dplyr")
+
+## your code here
+```
+
+
+## 2. Load the HPI data
 
 a. click into the [rhpi.csv](rhpi.csv) and have a look of the data. Does it have any header? How is each entry of the data separated? by space or comma?
 
@@ -27,7 +46,7 @@ colnames(rhpi_wide)[1] = "country"
 head(rhpi_wide)
 ```
 
-## 2. Convert the HPI data from wide to long
+## 3. Convert the HPI data from wide to long
 
 The original HPI data is in wide format. Each row represents a country and each column represents a quarter. This means that each row has the HPI values of **one** country and **different** quarters.
 
@@ -46,13 +65,13 @@ c. you will notice that the quarter value somehow has the X at the beginning (e.
 ## your code
 ```
 
-## 3. Load the PDI data and convert the PDI data from wide to long
+## 4. Load the PDI data and convert the PDI data from wide to long
 
 ```{r}
 ## your code
 ```
 
-## 4. Merge the long format HPI and PDI data
+## 5. Merge the long format HPI and PDI data
 
 a. take a look of the [`merge())`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/merge.html) function and merge the two dataframes together. You should provide the "```by```" argument. What should be the unique identifier? Country? Quarter? Or both?
 
@@ -62,7 +81,7 @@ b. take a look of the merged data using [`head())`](https://stat.ethz.ch/R-manua
 ## your code
 ```
 
-## 5. Filter the data
+## 6. Filter the data
 
 a. take a look of the [`which())`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/which.html) function. This function will return you the indices that a given condition is fulfilled.
 
@@ -74,7 +93,7 @@ c. use [`head())`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/head
 ## your code
 ```
 
-## 6. Melt the data
+## 7. Melt the data
 
 Try to use the `melt()` function again to produce a dataframe that is similar to this object:
 

@@ -4,9 +4,11 @@ You should clone this repository to get started with this lab.  The URL to clone
 
 ### Resources
 
+* Examine the tutorial on [How to Reshape a Data.frame](how-to-manipulate-dataframe.ipynb).
 * Use the other files in this repository for the exercise.  
 * Don't omit reading the the great book _R for Data Science_.  [Chapter 12](http://r4ds.had.co.nz/tidy-data.html) is a fantastic resource for understanding data reshaping.  
-* Examine the tutorial on [How to Reshape a Data.frame](how-to-manipulate-dataframe.ipynb).
+* [Altaf's resource on **dplyr** and the "tidyverse"](https://altaf-ali.github.io/tidydata_tutorial)
+* [Altaf's resource on **ggplot2**](https://altaf-ali.github.io/ggplot_tutorial)
 
 ### Assignment
 
@@ -18,15 +20,10 @@ You should clone this repository to get started with this lab.  The URL to clone
 
     b.  Inspect the R object [`cmpdata.RData`] from the file of the same name.  (You can access this by opening the file from the Files pane of Rstudio.)  What makes this data non-tidy?
 
-2.  **Reshaping simple examples in R.**
+2.  **Reshaping in R.**
 
-    a.  From the `cmpdata` object, replicate the reshaped object `cmpdataLong` from the lecture notes, using the **reshape2** package.  (Just use the same syntax as in the lecture notes.)
-
-    b.  Try using **dplyr** on `cmpdataLong` to "spread" this back into the wide format.
-
-3.  **Reshaping more complex examples in R.**
-
-    Update the [assignment-2-complex-example-r.ipynb](assignment-2-complex-example-r.ipynb) to reshape the same dataset we used in (3). But this time we will do it in R.
+    Work with the file [me314-assignment2-LASTNAME-FIRSTNAME.Rmd](me314-assignment2-LASTNAME-FIRSTNAME.Rmd) (after renaming it!)
+    
 
 ### Solutions
 
