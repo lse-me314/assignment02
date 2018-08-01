@@ -1,0 +1,33 @@
+---
+title: "Lab 2 - Solution"
+author: "Ken Benoit"
+output: html_document
+---
+
+## 1.  **Reshaping a simple example.**
+
+### 1a. 
+
+This comes straight from the lecture notes:
+```{r}
+library("reshape2", warn.conflicts = FALSE)
+load("cmpdata.Rdata")
+
+cmpdataLong <- melt(cmpdata,
+                    id.vars = c("countryname", "party", "date"),
+                    measure.vars = names(cmpdata)[21:76],
+                    variable.name = "category",
+                    value.name = "catcount")
+head(cmpdataLong, 10)
+```
+
+### 1b. 
+
+To "spread" this back into wide format, using the **tidyr** package:
+
+```{r}
+library("tidyr", warn.conflicts = FALSE)
+cmpdataWide <- spread(cmpdataLong, category, catcount)
+head(cmpdataWide)
+```
+
