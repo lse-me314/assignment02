@@ -28,5 +28,5 @@ You should clone this repository to get started with this lab.  The URL to clone
 ### Solutions
 
 Solution to Assignment 2 as:
-*  [html](solution/me314-assignment2-solution.html) 
-*  [RMarkdown](solution/me314-assignment2-solution.Rmd)  
+*  [html](me314-assignment2-solution.html) 
+*  [RMarkdown](me314-assignment2-solution.Rmd)  
