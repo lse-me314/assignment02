@@ -14,14 +14,15 @@ a.  From the `cmpdata` object, replicate the reshaped object `cmpdataLong` from 
 
 ```{r}
 library("reshape2")
+load("cmpdata.Rdata")
 
 ## your code here
 ```
 
-b.  Try using **dplyr** on `cmpdataLong` to "spread" this back into the wide format.
+b.  Try using **tidyr** on `cmpdataLong` to "spread" this back into the wide format.
 
 ```{r}
-library("dplyr")
+library("tidyr")
 
 ## your code here
 ```
@@ -40,9 +41,9 @@ d. you may find out that the first column name is empty. You may update the firs
 ```{r}
 ## your code (filled in for you already)
 
-rhpi_wide = read.csv("rhpi.csv") #if this line does not work, check where you are by getwd()
+rhpi_wide <- read.csv("rhpi.csv") #if this line does not work, check where you are by getwd()
 head(rhpi_wide)
-colnames(rhpi_wide)[1] = "country"
+colnames(rhpi_wide)[1] <- "country"
 head(rhpi_wide)
 ```
 
