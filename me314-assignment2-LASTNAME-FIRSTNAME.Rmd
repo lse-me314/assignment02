@@ -1,16 +1,15 @@
 # Reshaping data in R
 
-In this part of the assignment, we will again reshape [rhpi.csv](rhpi.csv) and [rpdi.csv](rpdi.csv), but this time we will use R to do it!
+In this assignment, we will be working with the **tidyr** package to reshape ("pivot") the dataset [rhpi.csv](rhpi.csv) and [rpdi.csv](rpdi.csv).
 
-Take a look of the [assignment-2-complex-example-python.ipynb](assignment-2-complex-example-python.ipynb) and try to do the same using R. You only need to fill in the part 1-6 here. You do **not** need to do the pivot table.
+These follow the examples from Chapter 12, "[Tidy data](https://r4ds.had.co.nz/tidy-data.html)", from Wickham and Grolemund, [_R for Data Science_](https://r4ds.had.co.nz/index.html).
 
-You may find it useful to learn more how to use dataframe in R, read the [how-to-manipulate-dataframe.ipynb](how-to-manipulate-dataframe.ipynb).
+You may find it useful to learn more how to use dataframes in R, read the [how-to-manipulate-dataframe.ipynb](how-to-manipulate-dataframe.ipynb).
 
-If you get stuck somewhere, feel free to contact us! As this is a formative assignment, we are happy to give you a few lines of codes to help you to start.
 
 ## 1.  **Reshaping a simple example.**
 
-a.  From the `cmpdata` object, replicate the reshaped object `cmpdataLong` from the lecture notes, using the **reshape2** package.  (Just use the same syntax as in the lecture notes.)
+a.  From the `cmpdata` object, replicate the reshaped object `cmpdataLong` from the lecture notes, using the **tidyr** package, using `gather()`.
 
 ```{r}
 library("reshape2")
@@ -19,7 +18,7 @@ load("cmpdata.Rdata")
 ## your code here
 ```
 
-b.  Try using **tidyr** on `cmpdataLong` to "spread" this back into the wide format.
+b.  Try using **tidyr** on `cmpdataLong` to "spread" this back into the wide format, but using `pivot_wider()`.
 
 ```{r}
 library("tidyr")
@@ -53,10 +52,7 @@ The original HPI data is in wide format. Each row represents a country and each 
 
 Here we would like to change it to long format so that each row has the a HPI value of **one** country and **one** quarter:
 
-a. take a look of the [`melt()`](https://cran.r-project.org/web/packages/reshape2/reshape2.pdf) function and convert the the HPI data into long format. You may want to provide the following additional arguments (take a look of [http://seananderson.ca/2013/10/19/reshape.html] if you do not know how to set the arguments):
-  * id
-  * value.name
-  * variable.name
+a. take a look of the [`pivot_wider()`](https://tidyr.tidyverse.org/reference/pivot_wider.html) function and convert the the HPI data into long format..
 
 b. use [`head()`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/head.html) to take a look of the data
 
@@ -74,7 +70,7 @@ c. you will notice that the quarter value somehow has the X at the beginning (e.
 
 ## 5. Merge the long format HPI and PDI data
 
-a. take a look of the [`merge())`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/merge.html) function and merge the two dataframes together. You should provide the "```by```" argument. What should be the unique identifier? Country? Quarter? Or both?
+a. take a look of the [`merge())`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/merge.html) function and merge the two dataframes together.  You should provide the "```by```" argument. What should be the unique identifier? Country? Quarter? Or both?
 
 b. take a look of the merged data using [`head())`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/head.html) to make sure the data are merged properly.
 
@@ -94,8 +90,8 @@ c. use [`head())`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/head
 ## your code
 ```
 
-## 7. Melt the data
+## 7. Make the data the data
 
-Try to use the `melt()` function again to produce a dataframe that is similar to this object:
+Try to use the `pivot_longer()` function again to produce a dataframe that is similar to this object:
 
 ![melted_df.png](melted_df.png)
