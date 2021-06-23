@@ -1,0 +1,214 @@
+---
+title: "Base R and Dplyr"
+author: "Ken Benoit & Sarah Jewett"
+date: "6/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Some Basic Base R
+
+```{r}
+
+sqrt(81)
+2^4
+log(2.718281828)
+
+# round to 2 decimal places
+round(2.718281828, 2)
+
+# round up
+ceiling(2.718)
+# round down
+floor(2.718)
+
+#Combine Values or Character Strings into a Vector or List
+a <- c(5, 9, 3, 4, 7)
+
+length(a)
+#this gives you the length of the vector
+
+# Can then apply functions to them:
+sqrt(c(5, 9, 3, 4, 7))
+sqrt(a)
+
+#can also use other functions:
+sum(c(5, 9, 3, 4, 7))
+#   how many?
+length(c(5, 9, 3, 4, 7))
+
+#   other statistics
+mean(c(5, 9, 3, 4, 7))
+median(c(5, 9, 3, 4, 7))
+var(c(5, 9, 3, 4, 7))
+sd(c(5, 9, 3, 4, 7))  
+
+# use ? to find out what a function does and how to use it properly...
+?sd() # parentheses optional
+
+# IMPORTANT!
+# The difference between min/max and which.min/which.max
+# which() gives you the indices, NOT the value:
+
+# 9 is the largest number
+max(c(5, 9, 3, 4, 7))
+
+# 3 is the smallest number
+min(c(5, 9, 3, 4, 7))
+
+# 9 is the second number in the sequence, so the output is 2
+which.max(c(5, 9, 3, 4, 7))
+
+# 3 is the third number in the sequence, so the output is 3
+which.min(c(5, 9, 3, 4, 7))
+
+# retrieve highest number by previously found index:
+a <- c(5, 9, 3, 4, 7)
+a[2]
+c(5, 9, 3, 4, 7)[2]
+
+
+
+```
+
+## dplyr
+
+[dplyr](https://dplyr.tidyverse.org) is part of the tidyverse, and it's great because it often simplifies or neatens code that would otherwise become convoluted in base R. Part of dplyr includes:
+
+- Tibbles: transforms data frames into a more palatable way, particularly for viewing in R Studio/RMarkdown. 
+  
+- Pipe Operators: pipes object first and then functions and arguments after. For example:
+
+        a <- c(5, 9, 3, 4, 7)
+
+        Base R:  min(a)
+        dplyr:   a %>% min()
+
+It helps avoid the confusion that comes with a lot of nesting. Let's install dplyr (uncomment the first line if you haven't installed it yet) and then load it. 
+
+```{r message=FALSE}
+# install.packages("tidyverse")
+library("dplyr")
+
+# note that you are loading just dplyr from the tidyverse, the install downloads all packages associated with the tidyverse and you could also use library(tidyverse) too
+```
+
+Let's go over some examples of how to work with dplyr from the link above. It uses Star Wars data that is part of the package. Let's take a look at the data first:
+
+```{r}
+data(starwars)
+
+head(starwars)
+tail(starwars)
+```
+
+**filter()** - picks cases based on values
+
+```{r}
+starwars %>% 
+  filter(species == "Droid")
+
+# in base R
+starwars[which(starwars$species=="Droid"), ]
+```
+
+**select()** - pick variables based on the name
+
+```{r}
+starwars %>% 
+  select(name, ends_with("color"))
+
+#note that when you run ?select, you will see other arguments besides just "ends_with"
+```
+**mutate()** adds new variables that are functions of existing variables
+```{r}
+starwars %>% 
+  mutate(name, bmi = mass / ((height / 100)  ^ 2)) %>%
+  select(name:mass, bmi)
+# try running it without the select() function and compare the results
+
+# in Base R 
+starwars$bmi <- starwars$mass/(starwars$height/100)^2
+
+```
+**arrange()** changes the ordering of rows. It defaults from smallest to largest, so you can use desc()
+```{r}
+starwars %>% 
+  arrange(desc(mass))
+
+# this works like sort() and rev(sort()) in Base R, however it only gives you the values:
+(rev(sort(starwars$mass)))
+
+# order does the same thing and you can have the table not unlike dplyr
+starwars[order(starwars$mass),]
+starwars[rev(order(starwars$mass)),]
+# pay attention to what happens to NA's here compared to using dplyr
+```
+
+Combining these functions allows you to really manipulate and get to know your data elegantly. When in doubt, slow down and separate by the pipe operator %>% and break down what it is doing one by one:
+
+```{r}
+starwars %>%
+  group_by(species) %>%
+  summarise(
+    n = n(),
+    # since you are grouping by species, n = n() tallies up the number of occurrences of the species 
+    mass = mean(mass, na.rm = TRUE)
+  ) %>%
+  filter(
+    n > 1,
+    # now you are specifying that you want to select only those species that have 2 or more occurences in the data. This drops 16 rows of species.
+    mass > 50
+    # mass being over 50 drops a further 12
+  )
+
+```
+
+## tidyR
+
+[tidyR](https://tidyr.tidyverse.org) is great for tidying your data (hence the name!) It is also part of the tidyverse! 
+
+Don't forget that a table is tidy if:
+
+- Each variable is its own column
+
+- Each observation (or case) its own row
+
+We mainly will focus on reshaping with tidyR, namely, pivoting.
+
+Let's go over a few examples from [this resource](https://tidyr.tidyverse.org/articles/pivot.html) together. It uses a datasetfrom a survey asking people about their religion and annual income. 
+```{r message=FALSE}
+library(tidyr) 
+
+data(relig_income)
+head(relig_income)
+
+```
+It is currently in a wide format, so we can make it longer using pivot_longer()
+
+```{r}
+relig_long <- relig_income %>% 
+  pivot_longer(cols = !religion, names_to = "income", values_to = "count")
+
+relig_long
+```
+#OR
+
+```{r}
+relig_income %>% 
+  pivot_longer(cols = colnames(relig_income[2:11]), names_to = "income", values_to = "count")
+```
+Let's pretend we got the data in long form and want it in wide form:
+
+```{r}
+relig_wide <- relig_long %>%
+  pivot_wider(names_from = c("income"), values_from = "count")
+```
+
+As you can see you basically just change the arguments as well as the function itself.
+
+### Let's move on to Assignment 2. You'll need to do some merging, which is part of base R, but here's a hint: there is also the [join() function](https://dplyr.tidyverse.org/reference/join.html) in dplyr 
+
