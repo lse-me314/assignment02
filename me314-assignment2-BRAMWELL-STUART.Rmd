@@ -1,0 +1,263 @@
+```{r, message=FALSE,warning=FALSE}
+
+library('tidyverse')
+
+```
+
+# What is tidy data?
+
+- Every variable has a column.
+- Every observation has a row.
+- Every value has a cell.
+
+# Which rules are violated?
+
+## 1st example
+
+```{r}
+
+table3 
+
+```
+
+`rate` has two values in each cell. It should therefore be broken up into two columns.
+
+```{r}
+
+table3 %>% 
+  separate(rate, into = c('cases', 'population'), sep = '/', convert = TRUE)
+
+```
+
+## 2nd example
+
+```{r}
+
+table4a 
+
+```
+
+`year` is a variable that is split over two columns. Year therefore needs its own column, and the values need to be shifted into a separate column.
+
+```{r}
+
+table4a %>% 
+  pivot_longer(-country, names_to = 'year', values_to = 'cases')
+
+```
+
+## 3rd example
+
+```{r}
+
+table2 
+
+```
+
+`type` contains two variables, namely cases and population. As a result, each country-year observation has two separate values. We need to pivot the data to where cases and population have their own columns.
+
+```{r}
+
+table2 %>% 
+  pivot_wider(id_cols = country:year,
+              names_from = type,
+              values_from = count)
+
+```
+
+# Reshaping data in R
+
+In this assignment, we will be working with the **tidyr** package to reshape ("pivot") the dataset [rhpi.csv](rhpi.csv) and [rpdi.csv](rpdi.csv).
+
+These follow the examples from Chapter 12, "[Tidy data](https://r4ds.had.co.nz/tidy-data.html)", from Wickham and Grolemund, [_R for Data Science_](https://r4ds.had.co.nz/index.html).
+
+You may find it useful to learn more how to use dataframes in R, read the [how-to-manipulate-dataframe.ipynb](how-to-manipulate-dataframe.ipynb).
+
+## 1.  **Reshaping a simple example.**
+
+a.  From the `cmpdata` object, replicate the reshaped object `cmpdataLong` from the lecture notes, using the **tidyr** package, using `pivot_longer()`.
+
+```{r}
+load("cmpdata.Rdata")
+
+cmpdata.subset <- 
+  select(cmpdata, countryname, date, partyname, 
+         starts_with('per'), -pervote, -peruncod)
+
+cmpdataLong <-
+  pivot_longer(cmpdata.subset,
+               cols = starts_with('per'),
+               names_to = 'issue',
+               values_to = 'mentions')
+
+cmpdataLong
+
+```
+
+b.  Try using **tidyr** on `cmpdataLong` to "spread" this back into the wide format, but using `pivot_wider()`.
+
+```{r}
+
+pivot_wider(cmpdataLong,
+            id_cols = c(countryname:partyname),
+            names_from = issue,
+            values_from = mentions)
+
+```
+
+## 2. Load the HPI data
+
+a. click into the [rhpi.csv](rhpi.csv) and have a look of the data. Does it have any header? How is each entry of the data separated? by space or comma?
+
+b. take a look of the [```read.csv```](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/read.table.html) function and read the csv data to r.
+
+```{r}
+
+hpi <- read.csv('rhpi.csv')
+
+```
+
+c. after the data is loaded into r, you can use [```head```](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/head.html) function to take a look of the first few rows of data. Is it in long or wide format?
+
+```{r}
+
+head(hpi)
+
+```
+
+
+d. you may find out that the first column name is empty. You may update the first column name to "country" by using [```colnames```](https://stat.ethz.ch/R-manual/R-devel/library/base/html/colnames.html) function. And remember R starts counting from 1!
+
+```{r}
+## your code (filled in for you already)
+
+rhpi_wide <- read.csv("rhpi.csv") #if this line does not work, check where you are by getwd()
+head(rhpi_wide)
+colnames(rhpi_wide)[1] <- "country"
+head(rhpi_wide)
+
+```
+
+## 3. Convert the HPI data from wide to long
+
+The original HPI data is in wide format. Each row represents a country and each column represents a quarter. This means that each row has the HPI values of **one** country and **different** quarters.
+
+Here we would like to change it to long format so that each row has the a HPI value of **one** country and **one** quarter:
+
+a. take a look of the [`pivot_longer()`](https://tidyr.tidyverse.org/reference/pivot_wider.html) function and convert the the HPI data into long format.
+
+b. use [`head()`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/head.html) to take a look of the data
+
+c. you will notice that the quarter value somehow has the X at the beginning (e.g. X1970.Q3 instead of 1970.Q3). If you want to remove the X from the quarter value, take a look of the [`substring()`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/substr.html) function.
+
+```{r}
+
+rhpi.long <- pivot_longer(rhpi_wide, 
+                          cols = -country, 
+                          names_to = 'quarter',
+                          values_to = 'hpi')
+
+rhpi.long <- mutate(rhpi.long, quarter = substring(quarter, 2, 8))
+
+head(rhpi.long)
+
+```
+
+## 4. Load the PDI data and convert the PDI data from wide to long
+
+```{r}
+## your code (filled in for you already)
+
+rpdi_wide <- read.csv("rpdi.csv") #if this line does not work, check where you are by getwd()
+head(rpdi_wide)
+colnames(rpdi_wide)[1] <- "country"
+head(rpdi_wide)
+```
+
+```{r}
+
+rpdi.long <- pivot_longer(rpdi_wide, 
+                          cols = -country, 
+                          names_to = 'quarter',
+                          values_to = 'pdi')
+
+rpdi.long <- mutate(rpdi.long, quarter = substring(quarter, 2, 8))
+
+head(rpdi.long)
+
+```
+
+## 5. Merge the long format HPI and PDI data
+
+a. take a look of the [`merge())`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/merge.html) function and merge the two dataframes together.  You should provide the "```by```" argument. What should be the unique identifier? Country? Quarter? Or both?
+
+```{r}
+
+merged.data <- merge(rhpi.long,
+                     rpdi.long,
+                     by = c('country', 'quarter'))
+
+```
+
+
+b. take a look of the merged data using [`head())`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/head.html) to make sure the data are merged properly.
+
+```{r}
+
+head(merged.data)
+
+```
+
+## 6. Filter the data
+
+a. take a look of the [`which())`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/which.html) function. This function will return you the indices that a given condition is fulfilled.
+
+b. filter the data so that only Australia data is shown.
+
+```{r}
+
+filtered.data <- merged.data[which(merged.data$country == 'Australia'),]
+
+# Or tidyverse equivalent
+
+filtered.data <- filter(merged.data, country == 'Australia')
+
+```
+
+c. use [`head())`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/head.html) and [`tail()`](https://stat.ethz.ch/R-manual/R-devel/library/utils/html/head.html) functions to take a look of the data to make sure you filtered the data correctly.
+
+```{r}
+
+head(filtered.data)
+
+```
+
+
+## 7. Make the data the data
+
+Try to use the `pivot_longer()` function again to produce a dataframe that is similar to this object:
+
+Note: I've nearly replicated this but can't get the exact order.
+
+```{r}
+
+replicated.data <-
+  merged.data %>% 
+  select(Quarter = quarter, Country = country, RHPI = hpi, RPDI = pdi) %>% 
+  pivot_longer(cols = c(RHPI, RPDI),
+               names_to = 'Index Type',
+               values_to = 'Value') %>% 
+  mutate(Quarter = str_replace(Quarter, '\\.', ':')) %>% 
+  arrange(Quarter, `Index Type`, Value) %>% 
+  as.data.frame()
+
+rownames(replicated.data) <- 0:7773
+
+head(replicated.data, 10)
+
+tail(replicated.data, 10)
+
+```
+
+
+![melted_df.png](melted_df.png)
